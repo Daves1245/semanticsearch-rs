@@ -6,10 +6,10 @@ edition = "2021"
 [dependencies]
 axum = "0.8.4"
 qdrant-client = "1.15.0"
-serde = "1.0.219"
+serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.141"
 tokio = { version = "1.47.0", features = ["full"] }
 
 [[bin]]
 name = "semantic-search-rs"
-path = "main.rs"
+path = "src/main.rs"
