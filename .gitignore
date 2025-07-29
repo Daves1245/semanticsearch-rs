@@ -3,6 +3,9 @@
 *.swo
 *.swn
 
+# qdrant setup
+logs/
+qdrant_data/
 
 # Added by cargo
 

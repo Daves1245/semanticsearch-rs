@@ -24,7 +24,7 @@ pub struct SearchResult {
 pub struct QdrantService {
     pub client: Arc<Qdrant>,
     pub collection_name: String,
-    pub vector_size: u32,
+    pub vector_size: u64,
 }
 
 impl QdrantService {
@@ -33,12 +33,20 @@ impl QdrantService {
         collection_name: &str,
         vector_size: u64,
     ) -> Result<Self, Box<dyn std::error::Error>> {
-        let client = Qdrant::from_url(qdrant_url).build()?;
+        let grpc_url = if qdrant_url.contains("6333") {
+            qdrant_url.replace("6333", "6334")
+        } else {
+            format!("http://localhost:6334")
+        };
+
+        let client = Qdrant::from_url(&grpc_url).build()?;
+
+        client.health_check().await?;
 
         let service = Self {
             client: Arc::new(client),
             collection_name: collection_name.to_string(),
-            vector_size: vector_size as u32,
+            vector_size,
         };
 
         service.ensure_collection_exists().await?;
@@ -52,7 +60,7 @@ impl QdrantService {
             Err(_) => {
                 self.client.create_collection(
                     CreateCollectionBuilder::new(&self.collection_name)
-                    .vectors_config(VectorParamsBuilder::new(10, Distance::Cosine))
+                    .vectors_config(VectorParamsBuilder::new(self.vector_size, Distance::Cosine))
                     .quantization_config(ScalarQuantizationBuilder::default())
                 ).await?;
                 Ok(())
