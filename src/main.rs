@@ -1,5 +1,6 @@
 mod types;
 mod qdrant;
+mod chunking;
 
 use std::sync::Arc;
 use types::models::Document;
@@ -117,7 +118,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/til/search", post(search_tils))
         .with_state(state);
 
-    println!("🚀 Server starting on http://{}", service_url);
+    println!("Server starting on http://{}", service_url);
     let listener = tokio::net::TcpListener::bind(service_url).await?;
     axum::serve(listener, app).await?;
 

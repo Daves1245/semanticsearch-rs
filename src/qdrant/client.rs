@@ -5,6 +5,9 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use crate::types::models::Document;
+use crate::chunking::chunk::{
+    parse_semantic, parse_sections
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SearchQuery {
